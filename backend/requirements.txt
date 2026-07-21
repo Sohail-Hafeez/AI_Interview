@@ -1,0 +1,13 @@
+python-dotenv
+requests
+groq
+sounddevice
+scipy
+numpy
+pyttsx3
+fastapi
+uvicorn[standard]
+python-multipart
+mcp
+pandas
+openpyxl
