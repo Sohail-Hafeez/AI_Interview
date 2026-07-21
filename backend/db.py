@@ -1,14 +1,18 @@
 import os
-import sqlite3
 from contextlib import contextmanager
 
-DB_PATH = os.getenv("DB_PATH", os.path.join(os.path.dirname(__file__), "interviews.db"))
+import psycopg2
+import psycopg2.extras
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 @contextmanager
 def get_connection():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
     try:
         yield conn
     finally:
@@ -17,7 +21,8 @@ def get_connection():
 
 def init_db():
     with get_connection() as conn:
-        conn.execute(
+        cur = conn.cursor()
+        cur.execute(
             """
             CREATE TABLE IF NOT EXISTS candidates (
                 token TEXT PRIMARY KEY,
@@ -27,29 +32,19 @@ def init_db():
                 score REAL,
                 summary TEXT,
                 status TEXT NOT NULL DEFAULT 'pending',
-                created_at TEXT NOT NULL DEFAULT (datetime('now'))
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                flags TEXT NOT NULL DEFAULT ''
             )
             """
         )
-        existing_columns = {row[1] for row in conn.execute("PRAGMA table_info(candidates)")}
-        if "flags" not in existing_columns:
-            conn.execute("ALTER TABLE candidates ADD COLUMN flags TEXT NOT NULL DEFAULT ''")
-        conn.commit()
-
-
-def add_flag(token, reason):
-    with get_connection() as conn:
-        row = conn.execute("SELECT flags FROM candidates WHERE token = ?", (token,)).fetchone()
-        existing = row["flags"] if row and row["flags"] else ""
-        updated = f"{existing};{reason}" if existing else reason
-        conn.execute("UPDATE candidates SET flags = ? WHERE token = ?", (updated, token))
         conn.commit()
 
 
 def insert_candidate(token, name, email, role):
     with get_connection() as conn:
-        conn.execute(
-            "INSERT INTO candidates (token, name, email, role, status) VALUES (?, ?, ?, ?, 'pending')",
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO candidates (token, name, email, role, status) VALUES (%s, %s, %s, %s, 'pending')",
             (token, name, email, role),
         )
         conn.commit()
@@ -57,26 +52,43 @@ def insert_candidate(token, name, email, role):
 
 def get_candidate(token):
     with get_connection() as conn:
-        row = conn.execute("SELECT * FROM candidates WHERE token = ?", (token,)).fetchone()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM candidates WHERE token = %s", (token,))
+        row = cur.fetchone()
         return dict(row) if row else None
 
 
 def update_candidate_status(token, status):
     with get_connection() as conn:
-        conn.execute("UPDATE candidates SET status = ? WHERE token = ?", (status, token))
+        cur = conn.cursor()
+        cur.execute("UPDATE candidates SET status = %s WHERE token = %s", (status, token))
         conn.commit()
 
 
 def set_candidate_score(token, score, summary):
     with get_connection() as conn:
-        conn.execute(
-            "UPDATE candidates SET score = ?, summary = ?, status = 'completed' WHERE token = ?",
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE candidates SET score = %s, summary = %s, status = 'completed' WHERE token = %s",
             (score, summary, token),
         )
         conn.commit()
 
 
+def add_flag(token, reason):
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT flags FROM candidates WHERE token = %s", (token,))
+        row = cur.fetchone()
+        existing = row["flags"] if row and row["flags"] else ""
+        updated = f"{existing};{reason}" if existing else reason
+        cur.execute("UPDATE candidates SET flags = %s WHERE token = %s", (updated, token))
+        conn.commit()
+
+
 def get_all_candidates():
     with get_connection() as conn:
-        rows = conn.execute("SELECT * FROM candidates ORDER BY created_at DESC").fetchall()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM candidates ORDER BY created_at DESC")
+        rows = cur.fetchall()
         return [dict(r) for r in rows]

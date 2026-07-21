@@ -11,3 +11,4 @@ python-multipart
 mcp
 pandas
 openpyxl
+psycopg2-binary
