@@ -203,6 +203,11 @@ function InterviewPage() {
     speak(SPEAKER_TEST_MESSAGE)
   }
 
+  function confirmSpeakerCheck() {
+    fetch(`${API_BASE}/api/candidates/${token}/speaker-check`, { method: 'POST' })
+    setScreen('mic-check')
+  }
+
   async function startMicCheckRecording() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     audioChunksRef.current = []
@@ -259,6 +264,10 @@ function InterviewPage() {
       speedKbps > 1000 ? `${(speedKbps / 1000).toFixed(2)} Mbps` : `${speedKbps.toFixed(0)} Kbps`,
     )
     setStatus('')
+
+    const formData = new FormData()
+    formData.append('speed_kbps', String(speedKbps))
+    fetch(`${API_BASE}/api/candidates/${token}/network-check`, { method: 'POST', body: formData })
   }
 
   useEffect(() => {
@@ -457,7 +466,7 @@ function InterviewPage() {
                 <p>Click the button below and make sure you can hear the message clearly.</p>
                 <button onClick={playSpeakerTest}>Play Test Sound</button>
                 <div className="button-row">
-                  <button onClick={() => setScreen('mic-check')}>Yes, I can hear it</button>
+                  <button onClick={confirmSpeakerCheck}>Yes, I can hear it</button>
                   <button className="secondary" onClick={playSpeakerTest}>
                     I can't hear anything
                   </button>

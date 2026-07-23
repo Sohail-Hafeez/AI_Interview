@@ -113,12 +113,14 @@ def find_column(columns, *candidates):
     return None
 
 
-def transcribe_audio(audio_bytes, filename, token=None):
+def transcribe_audio(audio_bytes, filename, token=None, check_type=None):
     with tracer.start_as_current_span("stt.transcribe") as span:
         span.set_attribute("stt.model", STT_MODEL)
         span.set_attribute("audio.size_bytes", len(audio_bytes))
         if token:
             span.set_attribute("interview.token", token)
+        if check_type:
+            span.set_attribute("check.type", check_type)
 
         transcription = groq_client.audio.transcriptions.create(
             file=(filename, audio_bytes),
@@ -248,7 +250,7 @@ def get_candidate_info(token: str):
 @app.post("/api/mic-check")
 async def mic_check(audio: UploadFile = File(...)):
     audio_bytes = await audio.read()
-    text = transcribe_audio(audio_bytes, audio.filename or "mic_check.webm")
+    text = transcribe_audio(audio_bytes, audio.filename or "mic_check.webm", check_type="mic_check")
     return {"transcript": text}
 
 
@@ -262,6 +264,32 @@ def network_test_file():
         media_type="application/octet-stream",
         headers={"Cache-Control": "no-store"},
     )
+
+
+@app.post("/api/candidates/{token}/speaker-check")
+def speaker_check_confirmed(token: str):
+    candidate = db.get_candidate(token)
+    if not candidate:
+        raise HTTPException(404, "Invalid interview link")
+
+    span = trace.get_current_span()
+    span.set_attribute("interview.token", token)
+    span.set_attribute("check.type", "speaker_check")
+    span.set_attribute("check.passed", True)
+    return {"status": "ok"}
+
+
+@app.post("/api/candidates/{token}/network-check")
+def network_check_result(token: str, speed_kbps: float = Form(...)):
+    candidate = db.get_candidate(token)
+    if not candidate:
+        raise HTTPException(404, "Invalid interview link")
+
+    span = trace.get_current_span()
+    span.set_attribute("interview.token", token)
+    span.set_attribute("check.type", "network_check")
+    span.set_attribute("network.speed_kbps", speed_kbps)
+    return {"status": "ok"}
 
 
 @app.post("/api/candidates/{token}/disqualify")
@@ -343,7 +371,9 @@ async def submit_answer(token: str, audio: UploadFile = File(...)):
         raise HTTPException(400, "Invalid or finished session")
 
     audio_bytes = await audio.read()
-    transcript = transcribe_audio(audio_bytes, audio.filename or "answer.webm", token=token)
+    transcript = transcribe_audio(
+        audio_bytes, audio.filename or "answer.webm", token=token, check_type="interview_answer"
+    )
 
     question_number = session["question_number"]
     span.set_attribute("interview.question_number", question_number)
