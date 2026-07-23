@@ -10,9 +10,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from groq import Groq
+from opentelemetry import trace
 
 import db
 from mcp_email_client import email_mcp_session, send_email_via_mcp
+
+tracer = trace.get_tracer("ai-interview-backend")
 
 load_dotenv()
 
@@ -64,19 +67,33 @@ def to_text(value):
 
 
 def ask_llm(messages, retries=3):
-    last_error = None
-    for _ in range(retries):
-        response = groq_client.chat.completions.create(
-            model=LLM_MODEL,
-            messages=messages,
-            response_format={"type": "json_object"},
-        )
-        content = response.choices[0].message.content
-        try:
-            return parse_json_response(content)
-        except json.JSONDecodeError as e:
-            last_error = e
-    raise last_error
+    with tracer.start_as_current_span("llm.ask") as span:
+        span.set_attribute("llm.model", LLM_MODEL)
+        span.set_attribute("llm.max_retries", retries)
+
+        last_error = None
+        attempts = 0
+        for _ in range(retries):
+            attempts += 1
+            response = groq_client.chat.completions.create(
+                model=LLM_MODEL,
+                messages=messages,
+                response_format={"type": "json_object"},
+            )
+            content = response.choices[0].message.content
+            try:
+                result = parse_json_response(content)
+                span.set_attribute("llm.attempts", attempts)
+                span.set_attribute("llm.malformed_json_retries", attempts - 1)
+                return result
+            except json.JSONDecodeError as e:
+                last_error = e
+
+        span.set_attribute("llm.attempts", attempts)
+        span.set_attribute("llm.malformed_json_retries", attempts)
+        span.set_attribute("llm.exhausted_retries", True)
+        span.record_exception(last_error)
+        raise last_error
 
 
 def build_system_prompt(role):
@@ -94,6 +111,22 @@ def find_column(columns, *candidates):
         if candidate in normalized:
             return normalized[candidate]
     return None
+
+
+def transcribe_audio(audio_bytes, filename, token=None):
+    with tracer.start_as_current_span("stt.transcribe") as span:
+        span.set_attribute("stt.model", STT_MODEL)
+        span.set_attribute("audio.size_bytes", len(audio_bytes))
+        if token:
+            span.set_attribute("interview.token", token)
+
+        transcription = groq_client.audio.transcriptions.create(
+            file=(filename, audio_bytes),
+            model=STT_MODEL,
+        )
+        text = transcription.text.strip()
+        span.set_attribute("transcript.length", len(text))
+        return text
 
 
 @app.post("/api/candidates/upload")
@@ -130,19 +163,26 @@ async def upload_candidates(file: UploadFile = File(...)):
     failed = []
     async with email_mcp_session() as session:
         for candidate in candidates:
-            link = f"{FRONTEND_BASE_URL}/interview/{candidate['token']}"
-            subject = f"Interview Invitation - {candidate['role']}"
-            body = (
-                f"Hi {candidate['name']},\n\n"
-                f"You've been invited to complete an AI interview for the {candidate['role']} role.\n"
-                f"Please open the link below when you're ready:\n\n{link}\n\n"
-                "Good luck!"
-            )
-            try:
-                await send_email_via_mcp(session, candidate["email"], subject, body)
-                sent.append(candidate["email"])
-            except Exception as e:
-                failed.append({"email": candidate["email"], "error": str(e)})
+            with tracer.start_as_current_span("email.send_invite") as span:
+                span.set_attribute("interview.token", candidate["token"])
+                span.set_attribute("interview.role", candidate["role"])
+
+                link = f"{FRONTEND_BASE_URL}/interview/{candidate['token']}"
+                subject = f"Interview Invitation - {candidate['role']}"
+                body = (
+                    f"Hi {candidate['name']},\n\n"
+                    f"You've been invited to complete an AI interview for the {candidate['role']} role.\n"
+                    f"Please open the link below when you're ready:\n\n{link}\n\n"
+                    "Good luck!"
+                )
+                try:
+                    await send_email_via_mcp(session, candidate["email"], subject, body)
+                    sent.append(candidate["email"])
+                    span.set_attribute("email.sent", True)
+                except Exception as e:
+                    failed.append({"email": candidate["email"], "error": str(e)})
+                    span.set_attribute("email.sent", False)
+                    span.record_exception(e)
 
     return {"total": len(candidates), "sent": sent, "failed": failed}
 
@@ -208,11 +248,8 @@ def get_candidate_info(token: str):
 @app.post("/api/mic-check")
 async def mic_check(audio: UploadFile = File(...)):
     audio_bytes = await audio.read()
-    transcription = groq_client.audio.transcriptions.create(
-        file=(audio.filename or "mic_check.webm", audio_bytes),
-        model=STT_MODEL,
-    )
-    return {"transcript": transcription.text.strip()}
+    text = transcribe_audio(audio_bytes, audio.filename or "mic_check.webm")
+    return {"transcript": text}
 
 
 NETWORK_TEST_PAYLOAD = os.urandom(500 * 1024)
@@ -229,9 +266,14 @@ def network_test_file():
 
 @app.post("/api/candidates/{token}/disqualify")
 def disqualify_candidate(token: str, reason: str = Form(...)):
+    span = trace.get_current_span()
+    span.set_attribute("interview.token", token)
+    span.set_attribute("disqualify.reason", reason)
+
     candidate = db.get_candidate(token)
     if not candidate:
         raise HTTPException(404, "Invalid interview link")
+    span.set_attribute("interview.role", candidate["role"])
     db.set_candidate_score(token, 0, f"Disqualified: {reason}")
     db.update_candidate_status(token, "disqualified")
     return {"status": "disqualified"}
@@ -239,6 +281,10 @@ def disqualify_candidate(token: str, reason: str = Form(...)):
 
 @app.post("/api/candidates/{token}/flag")
 def flag_candidate(token: str, reason: str = Form(...)):
+    span = trace.get_current_span()
+    span.set_attribute("interview.token", token)
+    span.set_attribute("flag.reason", reason)
+
     candidate = db.get_candidate(token)
     if not candidate:
         raise HTTPException(404, "Invalid interview link")
@@ -248,11 +294,17 @@ def flag_candidate(token: str, reason: str = Form(...)):
 
 @app.post("/api/candidates/{token}/start")
 def start_interview(token: str):
+    span = trace.get_current_span()
+    span.set_attribute("interview.token", token)
+
     candidate = db.get_candidate(token)
     if not candidate:
         raise HTTPException(404, "Invalid interview link")
     if candidate["status"] == "completed":
         raise HTTPException(400, "This interview has already been completed")
+
+    span.set_attribute("interview.role", candidate["role"])
+    span.set_attribute("interview.total_questions", TOTAL_QUESTIONS)
 
     messages = [
         {"role": "system", "content": build_system_prompt(candidate["role"])},
@@ -283,18 +335,18 @@ def start_interview(token: str):
 
 @app.post("/api/candidates/{token}/answer")
 async def submit_answer(token: str, audio: UploadFile = File(...)):
+    span = trace.get_current_span()
+    span.set_attribute("interview.token", token)
+
     session = sessions.get(token)
     if not session or session["finished"]:
         raise HTTPException(400, "Invalid or finished session")
 
     audio_bytes = await audio.read()
-    transcription = groq_client.audio.transcriptions.create(
-        file=(audio.filename or "answer.webm", audio_bytes),
-        model=STT_MODEL,
-    )
-    transcript = transcription.text.strip()
+    transcript = transcribe_audio(audio_bytes, audio.filename or "answer.webm", token=token)
 
     question_number = session["question_number"]
+    span.set_attribute("interview.question_number", question_number)
     is_last = question_number >= TOTAL_QUESTIONS
 
     if is_last:
@@ -319,6 +371,8 @@ async def submit_answer(token: str, audio: UploadFile = File(...)):
     if is_last:
         session["finished"] = True
         summary = to_text(result["summary"])
+        span.set_attribute("interview.final_score", result["score"])
+        span.set_attribute("interview.completed", True)
         db.set_candidate_score(token, result["score"], summary)
         return {
             "transcript": transcript,

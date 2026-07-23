@@ -12,3 +12,5 @@ mcp
 pandas
 openpyxl
 psycopg2-binary
+opentelemetry-distro
+opentelemetry-exporter-otlp
