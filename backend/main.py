@@ -2,6 +2,7 @@ import io
 import os
 import re
 import json
+import logging
 import uuid
 
 import pandas as pd
@@ -11,6 +12,10 @@ from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from groq import Groq
 from opentelemetry import trace
+from opentelemetry._logs import set_logger_provider
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
 
 import db
 from mcp_email_client import email_mcp_session, send_email_via_mcp
@@ -18,6 +23,13 @@ from mcp_email_client import email_mcp_session, send_email_via_mcp
 tracer = trace.get_tracer("ai-interview-backend")
 
 load_dotenv()
+
+logger_provider = LoggerProvider()
+set_logger_provider(logger_provider)
+logger_provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
+logging.getLogger().addHandler(LoggingHandler(level=logging.INFO, logger_provider=logger_provider))
+logging.getLogger().setLevel(logging.INFO)
+app_logger = logging.getLogger("ai-interview-backend")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
@@ -85,14 +97,20 @@ def ask_llm(messages, retries=3):
                 result = parse_json_response(content)
                 span.set_attribute("llm.attempts", attempts)
                 span.set_attribute("llm.malformed_json_retries", attempts - 1)
+                if attempts > 1:
+                    app_logger.warning(
+                        "LLM returned malformed JSON, succeeded after %d attempt(s)", attempts
+                    )
                 return result
             except json.JSONDecodeError as e:
                 last_error = e
+                app_logger.warning("LLM returned malformed JSON on attempt %d", attempts)
 
         span.set_attribute("llm.attempts", attempts)
         span.set_attribute("llm.malformed_json_retries", attempts)
         span.set_attribute("llm.exhausted_retries", True)
         span.record_exception(last_error)
+        app_logger.error("LLM exhausted all %d retries with malformed JSON", retries)
         raise last_error
 
 
@@ -181,10 +199,12 @@ async def upload_candidates(file: UploadFile = File(...)):
                     await send_email_via_mcp(session, candidate["email"], subject, body)
                     sent.append(candidate["email"])
                     span.set_attribute("email.sent", True)
+                    app_logger.info("Invite email sent to %s for role %s", candidate["email"], candidate["role"])
                 except Exception as e:
                     failed.append({"email": candidate["email"], "error": str(e)})
                     span.set_attribute("email.sent", False)
                     span.record_exception(e)
+                    app_logger.error("Failed to send invite email to %s: %s", candidate["email"], e)
 
     return {"total": len(candidates), "sent": sent, "failed": failed}
 
@@ -304,6 +324,9 @@ def disqualify_candidate(token: str, reason: str = Form(...)):
     span.set_attribute("interview.role", candidate["role"])
     db.set_candidate_score(token, 0, f"Disqualified: {reason}")
     db.update_candidate_status(token, "disqualified")
+    app_logger.warning(
+        "Candidate disqualified: token=%s role=%s reason=%s", token, candidate["role"], reason
+    )
     return {"status": "disqualified"}
 
 
@@ -353,6 +376,7 @@ def start_interview(token: str):
         "finished": False,
     }
     db.update_candidate_status(token, "in_progress")
+    app_logger.info("Interview started: token=%s role=%s", token, candidate["role"])
 
     return {
         "question": to_text(result["question"]),
@@ -404,6 +428,9 @@ async def submit_answer(token: str, audio: UploadFile = File(...)):
         span.set_attribute("interview.final_score", result["score"])
         span.set_attribute("interview.completed", True)
         db.set_candidate_score(token, result["score"], summary)
+        app_logger.info(
+            "Interview completed: token=%s score=%s", token, result["score"]
+        )
         return {
             "transcript": transcript,
             "comment": to_text(result["comment"]),
