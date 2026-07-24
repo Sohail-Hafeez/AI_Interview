@@ -12,7 +12,6 @@ from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from groq import Groq
 from opentelemetry import trace
-from opentelemetry._logs import set_logger_provider
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
@@ -25,7 +24,6 @@ tracer = trace.get_tracer("ai-interview-backend")
 load_dotenv()
 
 logger_provider = LoggerProvider()
-set_logger_provider(logger_provider)
 logger_provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
 logging.getLogger().addHandler(LoggingHandler(level=logging.INFO, logger_provider=logger_provider))
 logging.getLogger().setLevel(logging.INFO)
