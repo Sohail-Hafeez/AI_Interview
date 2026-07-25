@@ -433,7 +433,7 @@ function InterviewPage() {
       {screen === 'welcome' && (
         <div className="panel">
           <h2>
-            Thanks {candidateName} for applying for the {role} in NLC
+            Thanks {candidateName} for applying for the {role} role at SigNoz Hackathon
           </h2>
           <p>Before you begin, please read the following instructions carefully:</p>
           <ul className="rules-list">
