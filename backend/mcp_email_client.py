@@ -10,7 +10,9 @@ SERVER_SCRIPT = os.path.join(os.path.dirname(__file__), "email_mcp_server.py")
 
 @asynccontextmanager
 async def email_mcp_session():
-    params = StdioServerParameters(command=sys.executable, args=[SERVER_SCRIPT])
+    params = StdioServerParameters(
+        command=sys.executable, args=[SERVER_SCRIPT], env=dict(os.environ)
+    )
     async with stdio_client(params) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
