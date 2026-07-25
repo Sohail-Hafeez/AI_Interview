@@ -28,7 +28,9 @@ export const toast = {
   subscribe: (listener: Listener) => {
     listeners.add(listener)
     listener(toasts)
-    return () => listeners.delete(listener)
+    return () => {
+      listeners.delete(listener)
+    }
   },
   dismiss: (id: number) => {
     toasts = toasts.filter((t) => t.id !== id)
