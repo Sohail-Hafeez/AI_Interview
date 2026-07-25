@@ -5,7 +5,7 @@ import Brand from '../components/Brand'
 import ScoreRing from '../components/ScoreRing'
 import '../App.css'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8000'
 const SPEAKER_TEST_MESSAGE = 'This is a speaker test. Can you hear this message clearly?'
 const MIC_CHECK_PHRASE = 'Hello, I am a professional AI Expert'
 const FACE_MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models'

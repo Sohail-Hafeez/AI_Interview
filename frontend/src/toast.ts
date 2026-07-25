@@ -28,6 +28,8 @@ export const toast = {
   subscribe: (listener: Listener) => {
     listeners.add(listener)
     listener(toasts)
+    // Braces keep this void: Set.delete returns boolean, which is not a
+    // valid React useEffect cleanup return type.
     return () => {
       listeners.delete(listener)
     }

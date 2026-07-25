@@ -1,0 +1,2183 @@
+{
+ "description": "Full-stack observability for the SigNoz AI Interviews app - AI pipeline latency, delivery reliability, candidate funnel and database health. Built for the SigNoz Hackathon.",
+ "image": "",
+ "layout": [
+  {
+   "h": 3,
+   "i": "d7e6fe2c-1786-5f52-aa21-fa5bcb46a798",
+   "moved": false,
+   "static": false,
+   "w": 3,
+   "x": 0,
+   "y": 0
+  },
+  {
+   "h": 3,
+   "i": "be50326c-1c86-548f-9d22-4d2c5c2ca519",
+   "moved": false,
+   "static": false,
+   "w": 3,
+   "x": 3,
+   "y": 0
+  },
+  {
+   "h": 3,
+   "i": "b2ae1f1c-ee4c-5330-b16b-2c19206ca61f",
+   "moved": false,
+   "static": false,
+   "w": 3,
+   "x": 6,
+   "y": 0
+  },
+  {
+   "h": 3,
+   "i": "37bb19da-1842-50bd-b6f7-8d7df4e184c4",
+   "moved": false,
+   "static": false,
+   "w": 3,
+   "x": 9,
+   "y": 0
+  },
+  {
+   "h": 6,
+   "i": "c4c8b2ad-8431-5213-b0ec-a1464ed0cae9",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 0,
+   "y": 3
+  },
+  {
+   "h": 6,
+   "i": "397ec11c-eef3-50e5-a8b4-e5b51bdcaa80",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 6,
+   "y": 3
+  },
+  {
+   "h": 6,
+   "i": "b358d911-19dd-57ef-8ed8-918f41a3056c",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 0,
+   "y": 9
+  },
+  {
+   "h": 6,
+   "i": "56eea39a-fedc-59fd-bc75-5ad4fb755c11",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 6,
+   "y": 9
+  },
+  {
+   "h": 6,
+   "i": "96dc596e-f08e-5e95-8f8b-315c3c060a36",
+   "moved": false,
+   "static": false,
+   "w": 4,
+   "x": 0,
+   "y": 15
+  },
+  {
+   "h": 6,
+   "i": "de1ff654-3ab6-593d-b42d-2ac88464a820",
+   "moved": false,
+   "static": false,
+   "w": 4,
+   "x": 4,
+   "y": 15
+  },
+  {
+   "h": 6,
+   "i": "39962913-30bf-5d67-b174-e6aa16b6c451",
+   "moved": false,
+   "static": false,
+   "w": 4,
+   "x": 8,
+   "y": 15
+  },
+  {
+   "h": 6,
+   "i": "0ea9f6f5-e7f7-5660-adc7-2a98af230eb8",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 0,
+   "y": 21
+  },
+  {
+   "h": 6,
+   "i": "3c616d2f-0ceb-59a3-98f2-9b958e70f3fa",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 6,
+   "y": 21
+  },
+  {
+   "h": 6,
+   "i": "d081c79d-69eb-5827-975d-6cfeb46cb4c1",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 27
+  }
+ ],
+ "panelMap": {},
+ "tags": [
+  "signoz-hackathon",
+  "ai-interview"
+ ],
+ "title": "SigNoz AI Interviews - Observability",
+ "uploadedGrafana": false,
+ "version": "v5",
+ "widgets": [
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Candidates who clicked Begin Interview.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "d7e6fe2c-1786-5f52-aa21-fa5bcb46a798",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/start'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "started",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "393ddaca-c907-5ea8-b51a-2203e7e53cc9",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": ""
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Interviews Started",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Final question answered and scored.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "be50326c-1c86-548f-9d22-4d2c5c2ca519",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/answer' AND interview.completed = true"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "completed",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "65c59d3f-6326-593b-b742-4355df898daa",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": ""
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Interviews Completed",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Auto-disqualified, mostly multi-face detection.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "b2ae1f1c-ee4c-5330-b16b-2c19206ca61f",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/disqualify'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "disqualified",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "b7a3b73a-ed49-5df9-93a5-a50159284466",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": ""
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Disqualifications",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Mean LLM-assigned score out of 10.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "37bb19da-1842-50bd-b6f7-8d7df4e184c4",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "avg(interview.final_score)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/answer' AND interview.completed = true"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "avg score",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "923fbb73-c15f-5c15-9f10-1a9f33c8e384",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": ""
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Avg Final Score",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Groq LLM call latency.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "c4c8b2ad-8431-5213-b0ec-a1464ed0cae9",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p50(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'llm.ask'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p50",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p90(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'llm.ask'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p90",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p99(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "C",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'llm.ask'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p99",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "C",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "015bd6b2-c0d8-545f-8bc5-91a0934c489a",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": "ns"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [
+    {
+     "index": "0",
+     "keyIndex": 0,
+     "moveThreshold": 0,
+     "selectedGraph": "graph",
+     "thresholdColor": "Red",
+     "thresholdFormat": "Text",
+     "thresholdOperator": ">=",
+     "thresholdTableOptions": "",
+     "thresholdUnit": "ns",
+     "thresholdValue": 3000000000
+    }
+   ],
+   "timePreferance": "LAST_6_HR",
+   "title": "LLM Latency - llm.ask",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Whisper transcription latency.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "397ec11c-eef3-50e5-a8b4-e5b51bdcaa80",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p50(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'stt.transcribe'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p50",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p90(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'stt.transcribe'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p90",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p99(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "C",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'stt.transcribe'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p99",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "C",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "b703d335-079a-5733-9502-1481b8cacfed",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": "ns"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "STT Latency - stt.transcribe",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Candidate-perceived wait per answer.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "b358d911-19dd-57ef-8ed8-918f41a3056c",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p50(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/answer'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p50",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p90(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/answer'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p90",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p99(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "C",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/answer'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p99",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "C",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "57d2813e-8d1c-5aa5-b10a-6b4a846b6ab1",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": "ns"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Answer Endpoint Latency (STT + LLM)",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Non-zero means the model returned unparseable JSON.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "56eea39a-fedc-59fd-bc75-5ad4fb755c11",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'llm.ask' AND llm.malformed_json_retries > 0"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "malformed JSON retries",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'llm.ask' AND llm.exhausted_retries = true"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "exhausted retries",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "e60857a3-bf68-5638-800e-f1a7c16c5c39",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": ""
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "LLM JSON Retry Health",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Invite delivery via the MCP email server.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "96dc596e-f08e-5e95-8f8b-315c3c060a36",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "bar",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'email.send_invite' AND email.sent = true"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "sent",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'email.send_invite' AND email.sent = false"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "failed",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "a694555a-1bfe-537b-9f0e-b1a1c0fd094c",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": ""
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Email Delivery",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Synchronous SMTP fan-out makes this slow.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "de1ff654-3ab6-593d-b42d-2ac88464a820",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p90(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/upload'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p90",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "max(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/upload'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "max",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "88bbea4a-4341-5671-89a3-b1994e39784a",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": "ns"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Upload Endpoint Latency",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Supabase Postgres. New connection per call - no pooling.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "39962913-30bf-5d67-b174-e6aa16b6c451",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p90(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'SELECT'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "SELECT p90",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p90(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'INSERT'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "INSERT p90",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "fda82812-3830-5ef1-9517-8f33ad000972",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": "ns"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Database Latency",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Drop-off across the candidate readiness steps.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "0ea9f6f5-e7f7-5660-adc7-2a98af230eb8",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "bar",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/speaker-check'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "speaker",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/network-check'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "network",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "C",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/mic-check'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "mic",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "C",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "cb60c68c-a771-5303-81ad-c4a6d99817a1",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": ""
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Pre-flight Checks",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "Tab switches warn; multiple faces disqualify.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "3c616d2f-0ceb-59a3-98f2-9b958e70f3fa",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/flag'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "tab-switch flags",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend' AND name = 'POST /api/candidates/{token}/disqualify'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "disqualifications",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "6e8cd7ed-0568-5a48-a79b-e4c18bd959ce",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": ""
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Proctoring Flags",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "contextLinks": {
+    "linksData": []
+   },
+   "customLegendColors": {},
+   "decimalPrecision": 2,
+   "description": "p90 by span name.",
+   "fillMode": "none",
+   "fillSpans": false,
+   "id": "d081c79d-69eb-5827-975d-6cfeb46cb4c1",
+   "isLogScale": false,
+   "legendPosition": "bottom",
+   "lineInterpolation": "spline",
+   "lineStyle": "solid",
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "table",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p90(duration_nano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'ai-interview-backend'"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "fieldContext": "span",
+         "fieldDataType": "string",
+         "name": "name",
+         "signal": "traces"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p90",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "source": "",
+       "stepInterval": null
+      }
+     ],
+     "queryFormulas": [],
+     "queryTraceOperator": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "fe6c79b8-d8d1-5f12-801a-29c9932344a7",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder",
+    "unit": "ns"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "timestamp",
+     "signal": "logs",
+     "type": "log"
+    },
+    {
+     "dataType": "",
+     "fieldContext": "log",
+     "fieldDataType": "",
+     "isIndexed": false,
+     "name": "body",
+     "signal": "logs",
+     "type": "log"
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "fieldContext": "resource",
+     "fieldDataType": "string",
+     "name": "service.name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "string",
+     "name": "name",
+     "signal": "traces"
+    },
+    {
+     "fieldContext": "span",
+     "fieldDataType": "",
+     "name": "duration_nano",
+     "signal": "traces"
+    }
+   ],
+   "showPoints": false,
+   "softMax": 0,
+   "softMin": 0,
+   "spanGaps": true,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "LAST_6_HR",
+   "title": "Slowest Operations",
+   "yAxisUnit": "ns"
+  }
+ ],
+ "uuid": "d351f976-d248-5731-99f9-1cc3e08f5cc0"
+}

@@ -8,13 +8,11 @@ import uuid
 import pandas as pd
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from groq import Groq
 from opentelemetry import trace
-from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
-from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
 
 import db
 from mcp_email_client import email_mcp_session, send_email_via_mcp
@@ -23,12 +21,28 @@ tracer = trace.get_tracer("ai-interview-backend")
 
 load_dotenv()
 
-logger_provider = LoggerProvider()
-logger_provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
-logging.getLogger().addHandler(LoggingHandler(level=logging.INFO, logger_provider=logger_provider))
-logging.getLogger().addHandler(logging.StreamHandler())
-logging.getLogger().setLevel(logging.INFO)
+# The OTLP log pipeline and the TracerProvider are both installed by
+# `opentelemetry-instrument` (see Procfile), and its handler sits on the ROOT
+# logger -- so anything propagating to root gets shipped to SigNoz. Keep root
+# at WARNING and opt this app in at INFO; with root at INFO, library chatter
+# and the SDK's own diagnostics were 32 of every 64 exported records.
+logging.getLogger().setLevel(logging.WARNING)
+
+for _noisy_logger, _level in (
+    # The OTLP exporter logs its own transient export failures. Shipping those
+    # over OTLP is circular: when export breaks, so does the report about it.
+    ("opentelemetry.exporter.otlp.proto.grpc.exporter", logging.CRITICAL),
+    ("opentelemetry.instrumentation.logging", logging.CRITICAL),
+    ("opentelemetry.sdk._shared_internal", logging.CRITICAL),
+    # Groq/HTTP egress and the email MCP subprocess are already covered by
+    # spans, so their INFO lines duplicate trace data.
+    ("httpx", logging.WARNING),
+    ("mcp.server.lowlevel.server", logging.WARNING),
+):
+    logging.getLogger(_noisy_logger).setLevel(_level)
+
 app_logger = logging.getLogger("ai-interview-backend")
+app_logger.setLevel(logging.INFO)
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
@@ -187,10 +201,11 @@ async def upload_candidates(file: UploadFile = File(...)):
                 span.set_attribute("interview.role", candidate["role"])
 
                 link = f"{FRONTEND_BASE_URL}/interview/{candidate['token']}"
-                subject = f"Interview Invitation - {candidate['role']}"
+                subject = f"SigNoz AI Interviews - Invitation for {candidate['role']}"
                 body = (
                     f"Hi {candidate['name']},\n\n"
-                    f"You've been invited to complete an AI interview for the {candidate['role']} role.\n"
+                    f"You've been invited to complete a SigNoz AI Interview for the "
+                    f"{candidate['role']} role.\n"
                     f"Please open the link below when you're ready:\n\n{link}\n\n"
                     "Good luck!"
                 )
@@ -447,3 +462,22 @@ async def submit_answer(token: str, audio: UploadFile = File(...)):
         "total_questions": TOTAL_QUESTIONS,
         "finished": False,
     }
+
+
+# Serve the built frontend from the same origin. Mounted last so the SPA
+# catch-all cannot shadow any /api route. Skipped when static/ is absent,
+# so running the backend alone for local dev still works.
+STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+
+if os.path.isdir(STATIC_DIR):
+    app.mount(
+        "/assets",
+        StaticFiles(directory=os.path.join(STATIC_DIR, "assets")),
+        name="assets",
+    )
+
+    @app.get("/{full_path:path}")
+    async def spa(full_path: str):
+        # react-router resolves /interview/:token client-side, so every
+        # unmatched path must return index.html rather than a 404.
+        return FileResponse(os.path.join(STATIC_DIR, "index.html"))

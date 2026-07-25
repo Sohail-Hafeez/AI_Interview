@@ -3,7 +3,7 @@ import Brand from '../components/Brand'
 import { toast } from '../toast'
 import '../App.css'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8000'
 
 type Candidate = {
   token: string
