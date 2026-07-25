@@ -1,0 +1,39 @@
+# Runs the AI Interview app alongside the SigNoz stack inside WSL.
+# SigNoz itself is managed by foundryctl (~/signoz) -- do not add it here.
+#
+#   docker compose -f docker-compose.app.yml up -d --build
+
+services:
+  ai-interview:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-interview
+    restart: unless-stopped
+    ports:
+      # 8001, not 8000: the SigNoz MCP server binds 8000 and its port is fixed.
+      - "8001:8001"
+    # Secrets stay out of the image (see .dockerignore) and are injected here.
+    env_file:
+      - backend/.env
+    environment:
+      PORT: "8001"
+      # Must match the service.name every dashboard.json query filters on.
+      OTEL_SERVICE_NAME: ai-interview-backend
+      # signoz-ingester is a network alias of the collector on signoz-network.
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://signoz-ingester:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_EXPORTER_OTLP_INSECURE: "true"
+      # Installs the OTLP log pipeline and stamps trace_id/span_id on records.
+      OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED: "true"
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=local
+      # network-test-file streams a 500KB blob and ASGI emits one "http send"
+      # span per chunk -- ~306 spans per request. The useful signal
+      # (network.speed_kbps) is recorded on the /network-check span instead.
+      OTEL_PYTHON_FASTAPI_EXCLUDED_URLS: "api/network-test-file"
+    networks:
+      - signoz-network
+
+networks:
+  signoz-network:
+    external: true

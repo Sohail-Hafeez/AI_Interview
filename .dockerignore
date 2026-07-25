@@ -1,0 +1,22 @@
+# Secrets — .gitignore does NOT exclude these from the Docker build context.
+# backend/.env holds GROQ_API_KEY, GMAIL_APP_PASSWORD, SUPABASE_SERVICE_ROLE_KEY.
+# They are injected at runtime via env_file instead.
+**/.env
+**/.env.*
+
+backend/myvenv/
+backend/__pycache__/
+**/__pycache__/
+*.pyc
+backend/*.db
+
+frontend/node_modules/
+frontend/dist/
+
+# SigNoz deployment config is not part of the app image
+signoz/
+
+.git/
+.gitignore
+*.xlsx
+*.xls

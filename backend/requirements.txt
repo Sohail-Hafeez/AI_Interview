@@ -14,3 +14,7 @@ openpyxl
 psycopg2-binary
 opentelemetry-distro
 opentelemetry-exporter-otlp
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-psycopg2
+opentelemetry-instrumentation-httpx
+opentelemetry-instrumentation-logging

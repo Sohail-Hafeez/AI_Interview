@@ -28,7 +28,11 @@ export const toast = {
   subscribe: (listener: Listener) => {
     listeners.add(listener)
     listener(toasts)
-    return () => listeners.delete(listener)
+    // Braces keep this void: Set.delete returns boolean, which is not a
+    // valid React useEffect cleanup return type.
+    return () => {
+      listeners.delete(listener)
+    }
   },
   dismiss: (id: number) => {
     toasts = toasts.filter((t) => t.id !== id)
