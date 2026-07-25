@@ -1,32 +1,38 @@
 import os
-import smtplib
-from email.mime.text import MIMEText
+import requests
 
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
 load_dotenv()
 
-GMAIL_ADDRESS = os.getenv("GMAIL_ADDRESS")
-GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+SENDER_EMAIL = os.getenv("GMAIL_ADDRESS")
 
 mcp = FastMCP("email-server")
 
 
 @mcp.tool()
 def send_email(to: str, subject: str, body: str) -> str:
-    """Send a plain-text email via Gmail SMTP."""
-    if not GMAIL_ADDRESS or not GMAIL_APP_PASSWORD:
-        raise RuntimeError("GMAIL_ADDRESS or GMAIL_APP_PASSWORD missing from .env")
+    """Send a plain-text email via SendGrid."""
+    if not SENDGRID_API_KEY or not SENDER_EMAIL:
+        raise RuntimeError("SENDGRID_API_KEY or GMAIL_ADDRESS missing from .env")
 
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = GMAIL_ADDRESS
-    msg["To"] = to
-
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
-        server.sendmail(GMAIL_ADDRESS, [to], msg.as_string())
+    response = requests.post(
+        "https://api.sendgrid.com/v3/mail/send",
+        headers={
+            "Authorization": f"Bearer {SENDGRID_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "personalizations": [{"to": [{"email": to}]}],
+            "from": {"email": SENDER_EMAIL},
+            "subject": subject,
+            "content": [{"type": "text/plain", "value": body}],
+        },
+        timeout=15,
+    )
+    response.raise_for_status()
 
     return f"Email sent to {to}"
 
