@@ -21,4 +21,7 @@ async def send_email_via_mcp(session, to, subject, body):
     result = await session.call_tool(
         "send_email", arguments={"to": to, "subject": subject, "body": body}
     )
-    return result.content[0].text
+    text = result.content[0].text if result.content else ""
+    if result.isError:
+        raise RuntimeError(f"send_email tool failed: {text}")
+    return text
