@@ -29,7 +29,7 @@ This README is split into two halves on purpose: **Part 1** is what you need to 
 ---
 
 ## Architecture Overview
-
+Before going through Architecture keep in mind that a excel sheet is provided in the repo just open it add your details and use it as input on HR DasBoard
 ```
 Candidate Sheet (Excel/CSV)
         │
