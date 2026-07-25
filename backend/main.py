@@ -26,6 +26,7 @@ load_dotenv()
 logger_provider = LoggerProvider()
 logger_provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
 logging.getLogger().addHandler(LoggingHandler(level=logging.INFO, logger_provider=logger_provider))
+logging.getLogger().addHandler(logging.StreamHandler())
 logging.getLogger().setLevel(logging.INFO)
 app_logger = logging.getLogger("ai-interview-backend")
 
